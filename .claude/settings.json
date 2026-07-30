@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Read", "Glob", "Grep", "Edit", "Write",
+      "Workflow",
+      "Bash(git *)",
+      "Bash(gh pr create *)", "Bash(gh pr view *)", "Bash(gh pr list)", "Bash(gh pr list *)",
+      "Bash(npm *)", "Bash(npx *)", "Bash(node *)", "Bash(grep *)",
+      "Bash(pnpm *)", "Bash(corepack *)",
+      "mcp__linear-server__*",
+      "Agent(po)", "Agent(dev)", "Agent(ux-ui)", "Agent(qa)", "Agent(security)"
+    ],
+    "deny": [
+      "Bash(git push origin main*)", "Bash(git push origin master*)",
+      "Bash(git push --force*)",
+      "Bash(gh pr merge *)",
+      "Bash(rm -rf *)", "Bash(sudo *)", "Bash(curl *)", "Bash(wget *)",
+      "Read(~/.ssh/**)", "Read(~/.config/linear-agent/**)",
+      "Read(**/.env*)", "Edit(**/.env*)", "Write(**/.env*)",
+      "WebFetch", "WebSearch"
+    ]
+  }
+}
