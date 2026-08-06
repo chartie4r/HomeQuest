@@ -78,24 +78,55 @@ pnpm build                 # sortie Nitro dans .output/
 node .output/server/index.mjs
 ```
 
-En production, l'application tourne comme un **process Node long-running** sur le
-VPS, avec le dossier `./data` monté sur un volume persistant. Enchaîner
-`pnpm db:migrate` avant de démarrer le serveur.
+En production, l'application tourne comme un **process Node long-running** (Décision
+#8), avec le dossier `./data` monté sur un volume persistant.
 
-> Le `Dockerfile` / `docker-compose.yml` de déploiement ne sont pas encore fournis
-> (prochaine étape).
+### Docker (recommandé)
+
+```bash
+export NUXT_SESSION_PASSWORD="$(openssl rand -base64 32)"
+docker compose up -d --build
+# → http://localhost:3000
+```
+
+Le conteneur applique les migrations au démarrage
+(`NUXT_RUN_MIGRATIONS_ON_STARTUP=true`, déjà positionné dans l'image) et persiste
+la base dans le volume `homequest-data`. C'est le mode de déploiement visé sur le
+VPS.
+
+> **Layout `node_modules`** : `pnpm-workspace.yaml` fixe `nodeLinker: hoisted`.
+> C'est nécessaire pour que le binaire natif de libSQL soit résolvable depuis le
+> bundle Nitro au runtime.
+
+## API d'authentification
+
+Décision #9 — profils du foyer + NIP, session en cookie scellé (nuxt-auth-utils).
+
+| Méthode | Route | Rôle |
+|---------|-------|------|
+| `GET` | `/api/auth/profiles` | Liste des profils (id + nom) pour l'écran de sélection |
+| `POST` | `/api/auth/login` | `{ userId, pin }` → ouvre la session |
+| `POST` | `/api/auth/logout` | Ferme la session |
+| `GET` | `/api/me` | Route protégée d'exemple (401 si non connecté) |
+
+Côté client, `useUserSession()` (nuxt-auth-utils) donne l'état de session.
 
 ## Structure
 
 ```
 app/                    # front SPA (assets, app.vue) — pas encore d'écrans
 server/
+  api/
+    auth/               # login / logout / profiles
+    me.get.ts           # route protégée d'exemple
   database/
     schema.ts           # schéma Drizzle (SQLite)
     client.ts           # fabrique du client libSQL (partagée runtime/CLI)
-    migrate.ts          # applique les migrations
+    migrate.ts          # applique les migrations (CLI)
     seed.ts             # seed de démonstration
     migrations/         # migrations générées
+  plugins/
+    migrate.ts          # migrations au démarrage (conteneur)
   utils/
     drizzle.ts          # useDrizzle() — client mémoïsé côté serveur
     auth.ts             # hashPin() / verifyPin() (bcrypt)

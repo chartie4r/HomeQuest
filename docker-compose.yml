@@ -1,0 +1,16 @@
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      # Secret de session (≥ 32 caractères) — requis. Défini dans .env à côté.
+      NUXT_SESSION_PASSWORD: ${NUXT_SESSION_PASSWORD:?renseigner un secret de 32+ caracteres}
+      # NUXT_DATABASE_URL vaut file:/app/data/homequest.db par défaut dans l'image.
+    volumes:
+      # Persistance de la base SQLite (Décision #4).
+      - homequest-data:/app/data
+    restart: unless-stopped
+
+volumes:
+  homequest-data:

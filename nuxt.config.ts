@@ -28,6 +28,10 @@ export default defineNuxtConfig({
     // Décision #4 — SQLite (libSQL). Surchargé par NUXT_DATABASE_URL.
     // En self-host : fichier local. Pour une éventuelle instance distante : URL libsql://.
     databaseUrl: 'file:./data/homequest.db',
+    // Migrations appliquées au démarrage du serveur (activé en conteneur via
+    // NUXT_RUN_MIGRATIONS_ON_STARTUP=true). En dev on lance `pnpm db:migrate`.
+    runMigrationsOnStartup: false,
+    migrationsFolder: './server/database/migrations',
     public: {
       // Décision #7 — polling temps réel (ms)
       pollingInterval: 5000,

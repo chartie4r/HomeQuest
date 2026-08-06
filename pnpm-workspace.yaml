@@ -1,2 +1,6 @@
+# Layout node_modules à plat : requis pour que le binaire natif libSQL soit
+# résolvable depuis le bundle Nitro (.output) au runtime.
+nodeLinker: hoisted
+
 allowBuilds:
   esbuild: true
