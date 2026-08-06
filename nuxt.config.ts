@@ -32,6 +32,14 @@ export default defineNuxtConfig({
     // NUXT_RUN_MIGRATIONS_ON_STARTUP=true). En dev on lance `pnpm db:migrate`.
     runMigrationsOnStartup: false,
     migrationsFolder: './server/database/migrations',
+    // nuxt-auth-utils — cookie de session (Décision #9).
+    // secure=false par défaut pour autoriser l'accès en HTTP (LAN / IP:3000).
+    // Derrière HTTPS (prod Caddy) : NUXT_SESSION_COOKIE_SECURE=true.
+    session: {
+      cookie: {
+        secure: false,
+      },
+    },
     public: {
       // Décision #7 — polling temps réel (ms)
       pollingInterval: 5000,

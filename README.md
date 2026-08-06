@@ -89,6 +89,9 @@ docker compose up -d --build
 # → http://localhost:3000
 ```
 
+Déploiement sur un VPS Hostinger en une commande (HTTP ou HTTPS auto) :
+voir **[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)**.
+
 Le conteneur applique les migrations au démarrage
 (`NUXT_RUN_MIGRATIONS_ON_STARTUP=true`, déjà positionné dans l'image) et persiste
 la base dans le volume `homequest-data`. C'est le mode de déploiement visé sur le

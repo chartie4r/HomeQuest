@@ -1,0 +1,6 @@
+# Reverse proxy + HTTPS automatique (Let's Encrypt) devant HomeQuest.
+# Le domaine vient de la variable APP_DOMAIN (définie dans .env).
+{$APP_DOMAIN} {
+	encode zstd gzip
+	reverse_proxy app:3000
+}
