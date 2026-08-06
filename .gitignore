@@ -13,6 +13,12 @@ node_modules
 .cache
 dist
 
+# base de données SQLite locale (Décision #4)
+/data
+*.db
+*.db-shm
+*.db-wal
+
 # testing
 /coverage
 

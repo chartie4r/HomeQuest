@@ -11,6 +11,7 @@ export default defineNuxtConfig({
 
   modules: [
     '@pinia/nuxt',
+    // Décision #9 — auth locale : profils + NIP haché (bcrypt), session en cookie scellé.
     'nuxt-auth-utils',
   ],
 
@@ -24,8 +25,9 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
-    // Surchargé par NUXT_DATABASE_URL — Décision #4 (Neon)
-    databaseUrl: '',
+    // Décision #4 — SQLite (libSQL). Surchargé par NUXT_DATABASE_URL.
+    // En self-host : fichier local. Pour une éventuelle instance distante : URL libsql://.
+    databaseUrl: 'file:./data/homequest.db',
     public: {
       // Décision #7 — polling temps réel (ms)
       pollingInterval: 5000,
