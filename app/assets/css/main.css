@@ -1,0 +1,13 @@
+@import 'tailwindcss';
+
+/* Décision #6 — tokens de thème centralisés (Tailwind 4 `@theme`) */
+@theme {
+  --color-brand-50: oklch(0.97 0.02 250);
+  --color-brand-500: oklch(0.62 0.18 250);
+  --color-brand-600: oklch(0.54 0.19 250);
+  --color-brand-700: oklch(0.46 0.18 250);
+
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+
+  --radius-card: 0.75rem;
+}
