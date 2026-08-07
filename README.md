@@ -108,19 +108,33 @@ Décision #9 — profils du foyer + NIP, session en cookie scellé (nuxt-auth-ut
 | Méthode | Route | Rôle |
 |---------|-------|------|
 | `GET` | `/api/auth/profiles` | Liste des profils (id + nom) pour l'écran de sélection |
+| `POST` | `/api/auth/profiles` | `{ name, pin }` → crée un profil (NIP à 4 chiffres) |
 | `POST` | `/api/auth/login` | `{ userId, pin }` → ouvre la session |
 | `POST` | `/api/auth/logout` | Ferme la session |
 | `GET` | `/api/me` | Route protégée d'exemple (401 si non connecté) |
 
-Côté client, `useUserSession()` (nuxt-auth-utils) donne l'état de session.
+Côté client, `useUserSession()` (nuxt-auth-utils) donne l'état de session ; un
+middleware global redirige vers `/login` si non connecté.
+
+### Écrans
+
+- `/login` — sélection du profil (grille d'avatars + « Ajouter »)
+- `/login/:id` — clavier NIP du profil choisi
+- `/login/new` — création d'un profil
+- `/` — accueil connecté (placeholder, protégé)
 
 ## Structure
 
 ```
-app/                    # front SPA (assets, app.vue) — pas encore d'écrans
+app/                    # front SPA
+  pages/                # login (picker / NIP / création) + accueil
+  components/
+    PinPad.vue          # clavier NIP réutilisable
+  middleware/
+    auth.global.ts      # garde d'authentification
 server/
   api/
-    auth/               # login / logout / profiles
+    auth/               # profiles (GET/POST) / login / logout
     me.get.ts           # route protégée d'exemple
   database/
     schema.ts           # schéma Drizzle (SQLite)
