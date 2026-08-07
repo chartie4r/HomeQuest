@@ -1,0 +1,27 @@
+# Overlay production : ajoute Caddy (HTTPS automatique) devant l'app.
+# Usage : docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+# Requiert APP_DOMAIN dans .env (le domaine pointant vers le VPS).
+services:
+  app:
+    environment:
+      # Derrière HTTPS, le cookie de session doit être Secure.
+      NUXT_SESSION_COOKIE_SECURE: "true"
+
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      APP_DOMAIN: ${APP_DOMAIN:?definir APP_DOMAIN dans .env (ex. quest.mondomaine.com)}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      - app
+
+volumes:
+  caddy-data:
+  caddy-config:

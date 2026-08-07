@@ -1,0 +1,15 @@
+node_modules
+.output
+.nuxt
+.nitro
+.cache
+.data
+data
+*.db
+*.db-shm
+*.db-wal
+.git
+.env
+.env.*
+!.env.example
+automation/logs
