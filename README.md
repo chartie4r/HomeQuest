@@ -53,8 +53,21 @@ pnpm dev                  # http://localhost:3000
 |----------|------|--------|
 | `NUXT_DATABASE_URL` | URL libSQL de la base | `file:./data/homequest.db` |
 | `NUXT_SESSION_PASSWORD` | Secret de chiffrement de session (≥ 32 car.) | — (requis) |
+| `NUXT_PUBLIC_TIMEZONE` | Fuseau du foyer (nom IANA) | `America/Montreal` (heure de l'Est) |
 
 Générer un secret : `openssl rand -base64 32`.
+
+### `NUXT_PUBLIC_TIMEZONE`
+
+Un déploiement = un foyer = **un seul fuseau** : ce n'est pas un réglage par
+membre. La Décision #10 (aucun cron, calcul paresseux à la lecture) fait que
+« aujourd'hui » se dérive au moment de la requête — il faut donc ramener les
+timestamps, stockés en UTC (`unixepoch()`), à la date locale du foyer avant de
+les comparer à une cadence. Sans ça, une tâche cochée à 20 h à Montréal compte
+pour le lendemain et casse les séries tous les soirs.
+
+Valeur attendue : un nom IANA (`America/Montreal`, `Europe/Paris`…), pas une
+abréviation comme `EST`.
 
 ## Base de données
 
@@ -80,6 +93,15 @@ node .output/server/index.mjs
 
 En production, l'application tourne comme un **process Node long-running** (Décision
 #8), avec le dossier `./data` monté sur un volume persistant.
+
+### À faire à chaque déploiement
+
+- [ ] `NUXT_SESSION_PASSWORD` — un secret propre à l'instance (≥ 32 caractères).
+- [ ] `NUXT_PUBLIC_TIMEZONE` — **le fuseau du foyer**, en nom IANA. Par défaut
+      `America/Montreal` (heure de l'Est) ; à changer si le foyer est ailleurs,
+      sinon les journées et les séries seront décalées.
+- [ ] `NUXT_SESSION_COOKIE_SECURE=true` si l'instance est servie en HTTPS.
+- [ ] Volume persistant monté sur `./data`.
 
 ### Docker (recommandé)
 
