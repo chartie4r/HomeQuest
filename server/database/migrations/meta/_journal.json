@@ -8,6 +8,13 @@
       "when": 1786049913848,
       "tag": "0000_past_starbolt",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1786136967439,
+      "tag": "0001_natural_the_captain",
+      "breakpoints": true
     }
   ]
 }
