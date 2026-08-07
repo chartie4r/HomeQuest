@@ -43,6 +43,11 @@ export default defineNuxtConfig({
     public: {
       // Décision #7 — polling temps réel (ms)
       pollingInterval: 5000,
+      // Fuseau du foyer (nom IANA). Un déploiement = un foyer = un seul fuseau.
+      // Décision #10 (aucun cron) : « aujourd'hui » se dérive à la lecture, donc
+      // les timestamps UTC doivent être ramenés à la date locale du foyer avant
+      // d'être comparés à une cadence. Surchargé par NUXT_PUBLIC_TIMEZONE.
+      timezone: 'America/Montreal',
     },
   },
 
