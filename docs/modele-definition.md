@@ -436,9 +436,10 @@ refusé par `.claude/settings.json`, donc aucun agent ne peut le faire.
 
 ### 5.2 Les clés étrangères sont appliquées — vérifié, rien à faire
 
-`users` n'a **aucune** clé étrangère aujourd'hui : cette spec introduit les cinq
-premières du schéma. Et `server/database/client.ts:21` ouvre la connexion sans rien
-configurer :
+`users` n'a **aucune** clé étrangère aujourd'hui : cette spec introduit les **trois**
+premières du schéma — `routines.owner_id`, `tasks.routine_id` et `tasks.created_by`,
+toutes en `on delete restrict`. Et `server/database/client.ts:21` ouvre la connexion sans
+rien configurer :
 
 ```ts
 return drizzle(createClient({ url }), { schema, casing: 'snake_case' })
@@ -458,7 +459,7 @@ repo, base fichier :
 | `DELETE` d'un parent référencé, colonne en `ON DELETE RESTRICT` | refusé |
 | Le même `DELETE` depuis une **deuxième** connexion | refusé — ce n'est pas un état de session |
 
-Donc : **aucune modification de `client.ts`**, et les cinq `on delete restrict` de cette
+Donc : **aucune modification de `client.ts`**, et les trois `on delete restrict` de cette
 spec sont réels, pas décoratifs.
 
 > ⚠️ Le seul cas non couvert par cette mesure est une base **distante** (`libsql://…`),
