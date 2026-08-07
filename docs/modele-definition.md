@@ -412,8 +412,11 @@ Ids raccourcis pour la lisibilité ; en vrai ce sont des UUID. Membres repris du
 
 ## 5. Prérequis d'implémentation
 
-Trois choses à régler **avant ou pendant** l'écriture du schéma. Aucune n'est une
-décision — ce sont des trous constatés dans l'état actuel du repo.
+Trois points constatés dans l'état actuel du repo. Aucun n'est une décision.
+
+- **§ 5.1 — à faire** : le fuseau du foyer n'est pas dans `main`. Bloquant.
+- **§ 5.2 — rien à faire** : les clés étrangères sont bien appliquées. Vérifié.
+- **§ 5.3 — à faire** : normaliser `steps` à l'écriture.
 
 ### 5.1 `todayInHouseholdTz()` n'existe pas encore
 
@@ -431,21 +434,37 @@ refusé par `.claude/settings.json`, donc aucun agent ne peut le faire.
 > fuseau. `sql\`(date('now'))\`` rendrait la date UTC et décalerait d'un jour toute
 > routine créée en soirée.
 
-### 5.2 Les clés étrangères sont-elles seulement appliquées ?
+### 5.2 Les clés étrangères sont appliquées — vérifié, rien à faire
 
 `users` n'a **aucune** clé étrangère aujourd'hui : cette spec introduit les cinq
-premières du schéma. Or `server/database/client.ts:21` ouvre la connexion sans rien
+premières du schéma. Et `server/database/client.ts:21` ouvre la connexion sans rien
 configurer :
 
 ```ts
 return drizzle(createClient({ url }), { schema, casing: 'snake_case' })
 ```
 
-SQLite n'applique les clés étrangères que si `PRAGMA foreign_keys = ON` est réglé
-**par connexion**. À vérifier sur `@libsql/client` 0.17 avant de compter sur
-`on delete restrict` : si le pragma n'est pas actif par défaut, tous les `restrict` de
-cette spec sont décoratifs. Un simple `INSERT` avec un `owner_id` inexistant, suivi d'un
-`SELECT`, tranche la question en trente secondes.
+SQLite classique n'applique les clés étrangères que si `PRAGMA foreign_keys = ON` est
+réglé **par connexion**, et le laisse à `OFF` par rétrocompatibilité — d'où le doute.
+
+**`@libsql/client` 0.17.4 ne se comporte pas comme SQLite classique sur ce point : il
+règle `foreign_keys = 1` de lui-même, sur chaque connexion.** Mesuré contre le client du
+repo, base fichier :
+
+| Test | Résultat |
+| --- | --- |
+| `PRAGMA foreign_keys` sur une connexion neuve, sans configuration | `1` |
+| `INSERT` d'un enfant avec un parent inexistant | `SQLITE_CONSTRAINT: FOREIGN KEY constraint failed` |
+| `DELETE` d'un parent référencé, colonne en `ON DELETE RESTRICT` | refusé |
+| Le même `DELETE` depuis une **deuxième** connexion | refusé — ce n'est pas un état de session |
+
+Donc : **aucune modification de `client.ts`**, et les cinq `on delete restrict` de cette
+spec sont réels, pas décoratifs.
+
+> ⚠️ Le seul cas non couvert par cette mesure est une base **distante** (`libsql://…`),
+> que le README garde comme porte de sortie. L'application des FK y dépend du serveur, pas
+> du client. À re-vérifier si ce jour arrive ; sans objet pour un déploiement auto-hébergé
+> sur fichier.
 
 ### 5.3 Normalisation des étapes à l'écriture
 
