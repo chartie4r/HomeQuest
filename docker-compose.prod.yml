@@ -3,6 +3,14 @@
 # Requiert APP_DOMAIN dans .env (le domaine pointant vers le VPS).
 services:
   app:
+    # Derrière Caddy, l'app est jointe par le réseau interne Docker
+    # (reverse_proxy app:3000). Publier 3000 sur l'hôte exposerait l'app en
+    # clair sur Internet — y compris en IPv6, que le pare-feu du fournisseur
+    # ne filtre pas toujours. On restreint le binding à la loopback : plus
+    # d'exposition publique, mais `curl localhost:3000` reste possible sur le
+    # serveur pour diagnostiquer.
+    ports: !override
+      - "127.0.0.1:3000:3000"
     environment:
       # Derrière HTTPS, le cookie de session doit être Secure.
       NUXT_SESSION_COOKIE_SECURE: "true"
