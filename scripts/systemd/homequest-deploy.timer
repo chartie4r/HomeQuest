@@ -1,0 +1,16 @@
+[Unit]
+Description=HomeQuest — vérifie toutes les 15 min si un redéploiement est nécessaire
+Documentation=https://github.com/chartie4r/HomeQuest/blob/main/docs/DEPLOYMENT.md
+
+[Timer]
+# Laisse le temps à Docker de démarrer après un reboot avant le premier passage.
+OnBootSec=5min
+OnUnitActiveSec=15min
+# Rattrape le passage manqué si le VPS était éteint à l'heure prévue.
+Persistent=true
+# Décale l'exécution de 0 à 2 min : évite que tous les déploiements HomeQuest
+# de la planète tapent GitHub à la même seconde.
+RandomizedDelaySec=2min
+
+[Install]
+WantedBy=timers.target

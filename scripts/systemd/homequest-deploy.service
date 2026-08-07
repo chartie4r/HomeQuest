@@ -1,0 +1,17 @@
+[Unit]
+Description=HomeQuest — redéploiement si la branche suivie a bougé
+Documentation=https://github.com/chartie4r/HomeQuest/blob/main/docs/DEPLOYMENT.md
+# Docker doit être prêt, sinon le premier passage après un reboot échoue.
+After=docker.service network-online.target
+Wants=network-online.target
+Requires=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash /opt/homequest/scripts/deploy.sh
+# Le build Nuxt dans Docker peut être long sur un petit VPS ; sans marge,
+# systemd tuerait le déploiement en cours de route.
+TimeoutStartSec=30min
+# La sortie part dans journalctl -u homequest-deploy.service
+StandardOutput=journal
+StandardError=journal

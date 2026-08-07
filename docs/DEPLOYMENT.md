@@ -63,13 +63,21 @@ les conteneurs. Le relancer met simplement le code à jour et redéploie.
 1. Chez ton registrar (ou le DNS Hostinger), crée un enregistrement **A** :
    `quest.mondomaine.com → IP_DU_VPS`.
 2. Ouvre les ports **80** et **443** (firewall Hostinger / hPanel → VPS → Firewall).
-3. En mode HTTPS, pense à **fermer/filtrer le port 3000** depuis Internet (l'app
-   reste accessible via Caddy).
+3. Le port **3000 n'est plus publié** en mode HTTPS : il est restreint à la
+   loopback (`docker-compose.prod.yml`), Caddy joignant l'app par le réseau
+   interne Docker. Rien à filtrer côté pare-feu.
+
+> **Le pare-feu du fournisseur ne suffit pas pour un port publié par Docker.**
+> Docker écrit ses règles iptables en amont d'`ufw` : un `ufw deny 3000` ne
+> bloque rien. Et si le VPS a une IPv6 publique, `docker-proxy` écoute aussi
+> sur `[::]` — vérifie avec `ss -tlnp | grep 3000`.
 
 ## 5. Premier accès
 
-- Un profil de démonstration existe : **« Démo » / NIP 1234**.
-- Crée les profils de ta famille, puis **supprime le profil Démo**.
+- La base est **vide au premier démarrage** : le seed (`pnpm db:seed`) n'est pas
+  exécuté dans le conteneur, seules les migrations le sont.
+- Va sur `/login` et utilise le bouton **« + Ajouter »** pour créer ton premier
+  profil, puis ceux de ta famille.
 
 ## 6. Mettre à jour
 
@@ -80,6 +88,41 @@ sudo bash /opt/homequest/scripts/install.sh
 
 Le script fait un `git pull`, reconstruit l'image et redémarre — la base est
 préservée (volume Docker).
+
+### Mise à jour automatique (optionnel)
+
+Un timer systemd peut vérifier toutes les 15 min si la branche suivie a bougé,
+et redéployer le cas échéant :
+
+```bash
+sudo bash /opt/homequest/scripts/autodeploy-install.sh
+```
+
+```bash
+journalctl -u homequest-deploy.service -f          # suivre
+systemctl start homequest-deploy.service           # forcer un passage
+sudo bash /opt/homequest/scripts/autodeploy-install.sh --disable
+```
+
+Le VPS **interroge** GitHub — rien n'est poussé vers lui. Aucune clé à confier à
+un tiers, aucun port entrant supplémentaire.
+
+Chaque redéploiement nettoie les images orphelines (`docker image prune -f`),
+sans quoi le disque se remplit au fil des mois. Si un build échoue, les
+conteneurs en place continuent de tourner sur l'ancienne image et le passage
+suivant réessaie : le SHA n'est enregistré comme déployé qu'après succès.
+
+> **Ce que ça implique.** Tout commit poussé sur `main` part en production dans
+> les 15 min. Sur un dépôt où l'on développe directement sur `main`, un commit
+> incomplet devient l'app de la famille. Pour ne déployer que ce que tu déclares
+> prêt, fais suivre au VPS une branche dédiée plutôt que `main` :
+>
+> ```bash
+> sudo systemctl edit homequest-deploy.service
+> # puis, dans l'éditeur :
+> #   [Service]
+> #   Environment=DEPLOY_BRANCH=production
+> ```
 
 ## 7. Sauvegarde & restauration
 

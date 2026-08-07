@@ -83,4 +83,4 @@ else
   echo "   → http://$ip:3000"
   warn "Accès en HTTP simple : réserve-le au réseau local. Pour Internet, relance avec APP_DOMAIN=..."
 fi
-echo "   Profil de démo : « Démo » / NIP 1234 — à supprimer une fois tes profils créés."
+echo "   La base est vide : va sur /login et utilise « + Ajouter » pour créer ton premier profil."
