@@ -33,12 +33,13 @@ tâches, ou seulement celles du tableau.
 _Éviter_ : corvée, quête, mission, activité
 
 **Tâche de routine** :
-Une tâche qui appartient à une routine. Elle n'est pas réclamable, n'apparaît pas sur le
+Une tâche qui appartient à une routine. Elle ne se prend pas, n'apparaît pas sur le
 tableau, et n'existe qu'à l'intérieur de sa routine.
 
 **Tâche du tableau** :
 Une tâche qui n'appartient à aucune routine. Elle est ouverte à tous — premier arrivé,
-premier payé — et n'appartient à personne tant que personne ne l'a prise.
+premier payé — et n'appartient à personne tant que personne ne l'a **prise**. Une fois
+prise, elle se ferme à tous les autres jusqu'à ce qu'un adulte tranche.
 _Éviter_ : corvée
 
 **Routine** :
@@ -92,9 +93,10 @@ Non archivée. Une tâche de routine n'est active que si elle-même **et** sa ro
 sont.
 
 **Ponctuelle** :
-Une tâche du tableau qui quitte le tableau une fois faite. Par défaut une tâche du
-tableau est une **offre permanente**, réclamable et payée autant de fois qu'elle se
-présente.
+Une tâche du tableau qui quitte le tableau une fois **approuvée** — pas une fois faite :
+une complétion refusée la remet en jeu. Par défaut une tâche du tableau est une **offre
+permanente**, prenable et payée autant de fois qu'elle se présente, sans plafond ni
+délai d'attente entre deux fois.
 _Éviter_ : unique, one-shot, non répétitive
 
 ### Les gens et ce qu'ils gagnent
@@ -127,3 +129,23 @@ _Éviter_ : pièce, jeton, crédit
 **Récompense** :
 Ce qu'une tâche paie : ses XP et ses points. À ne pas confondre avec le **prix** d'un
 objectif, qui est du texte libre, ni avec un article de la boutique.
+
+### Faire une tâche
+
+**Prise** :
+Le fait qu'un membre s'attribue une tâche du tableau avant de la faire. Elle en exclut
+tous les autres jusqu'à ce qu'un adulte tranche, et elle ne survit pas à la journée :
+une tâche prise doit être faite dans la journée. Une tâche de routine ne se prend pas —
+elle appartient déjà à son membre.
+_Éviter_ : réclamation, assignation, réservation
+
+**Libre** :
+Se dit d'une tâche du tableau que personne ne tient. C'est son état par défaut, et celui
+où elle revient quand la prise expire ou qu'un adulte refuse.
+_Éviter_ : disponible, ouverte
+
+**Complétion** :
+La trace d'une tâche faite par un membre. Elle naît quand il prend une tâche du tableau,
+ou quand il déclare faite une tâche de routine, et elle vit jusqu'à ce qu'un adulte
+l'approuve ou la refuse. C'est elle qu'un **objectif** compte.
+_Éviter_ : réalisation, exécution, validation
